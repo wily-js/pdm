@@ -6,12 +6,10 @@ import (
 )
 
 const (
-	RoleGuest      = 0 // 访客
-	RoleTester     = 1 // 测试
-	RoleDeveloper  = 2 // 开发
-	RoleMaintainer = 3 // 维护
-	RoleCreator    = 4 // 创建者
-	RoleManger     = 5 // 管理员
+	RoleDeveloper      = 0 // 开发
+	RoleInterConnector = 1 // 对接
+	RoleCreator        = 2 // 创建者
+	RoleManger         = 3 // 管理员
 )
 
 // ProjectMember 项目成员
