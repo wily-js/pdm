@@ -12,10 +12,12 @@ import (
 	"time"
 )
 
-// DBDao 数据库连接实例
-var DBDao *gorm.DB
+// DB 数据库连接实例
+var DB *gorm.DB
 
-var ()
+var (
+	UserRepo *UserRepository
+)
 
 // Init 初始化数据库信息
 func Init(config *appconf.Application) error {
@@ -47,12 +49,12 @@ func Init(config *appconf.Application) error {
 		return fmt.Errorf("数据库配置信息错误，%s", err.Error())
 	}
 
-	DBDao, err = gorm.Open(dialector, &gorm.Config{Logger: output})
+	DB, err = gorm.Open(dialector, &gorm.Config{Logger: output})
 	if err != nil {
 		return err
 	}
 
 	// 服务注册
-
+	UserRepo = NewUserRepository()
 	return nil
 }

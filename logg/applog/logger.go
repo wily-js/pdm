@@ -34,7 +34,7 @@ func (l *Logger) daemon() {
 	zap.L().Info("日志持久化存储精灵 [启动]")
 	for item := range l.buff {
 		record := item
-		err = repo.DBDao.Create(item).Error
+		err = repo.DB.Create(item).Error
 
 		if err != nil {
 			zap.L().Warn("日志写入失败", zap.Any("record", record), zap.Error(err))
@@ -48,7 +48,7 @@ func (l *Logger) timeoutDeleteDaemon() {
 	if _globalL.maxKeepDays > 0 {
 		for {
 			now := time.Now().AddDate(0, 0, -_globalL.maxKeepDays).Format("2006-01-02 15:04:05")
-			repo.DBDao.Where("created_at < ?", now).Delete(&entity.Log{})
+			repo.DB.Where("created_at < ?", now).Delete(&entity.Log{})
 			time.Sleep(24 * time.Hour)
 		}
 	}

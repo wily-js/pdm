@@ -36,4 +36,6 @@ func RouteMapping(r gin.IRouter) {
 
 	// 所有RestFul接口都以 /api开始
 	r = r.Group("/api")
+	NewLoginController(r)
+	NewUserController(r)
 }
