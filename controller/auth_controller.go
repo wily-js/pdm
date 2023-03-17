@@ -22,6 +22,9 @@ func NewLoginController(r gin.IRouter) *LoginController {
 	// 登出
 	r.DELETE("/logout", Authed, res.logout)
 
+	// 验证登录token
+	r.GET("/check", res.check)
+
 	res.userCache = cache.New(cache.NoExpiration, 10*time.Minute)
 
 	return res
@@ -206,4 +209,61 @@ HTTP/1.1 200 OK
 // logout 登出
 func (c *LoginController) logout(ctx *gin.Context) {
 	ctx.SetCookie("token", "", -1, "", "", false, true)
+}
+
+/**
+@api {GET} /api/check 验证token
+@apiDescription 验证token。
+@apiName AuthCheck
+@apiGroup Auth
+
+@apiPermission 匿名
+
+@apiSuccess {String} type 用户类型
+@apiSuccess {Integer} id 用户记录ID
+@apiSuccess {String} name 姓名
+@apiSuccess {Integer} exp 会话过期时间，单位Unix时间戳毫秒（ms）
+
+@apiParamExample {HTTP} 请求示例
+GET /api/check
+
+{
+	"type": "user",
+    "id": 1,
+    "name": "张三",
+    "exp": 1668523424095
+}
+
+
+@apiSuccessExample 成功响应
+HTTP/1.1 200 OK
+
+
+@apiErrorExample 失败响应
+HTTP/1.1 500
+
+系统内部错误
+*/
+
+// check 验证登录token
+func (c *LoginController) check(ctx *gin.Context) {
+	// 从cookies中获取token
+	token, _ := ctx.Cookie("token")
+	if token == "" {
+		return
+	}
+	claims, err := reuint.VerifyToken(token)
+	if err != nil {
+		ErrSys(ctx, err)
+		return
+	}
+	user := entity.User{}
+	if err = repo.DB.First(&user, "id = ? AND is_delete = 0", claims.Sub).Error; err != nil {
+		ErrSys(ctx, err)
+		return
+	}
+	res := dto.LoginToDto{}
+	res.Transform(claims)
+	res.Name = user.Name
+	ctx.JSON(200, res)
 }

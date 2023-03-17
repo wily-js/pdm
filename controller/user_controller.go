@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	"path/filepath"
+	"pdm/appconf/dir"
 	"pdm/controller/dto"
 	"pdm/controller/middle"
 	"pdm/logg/applog"
@@ -468,21 +470,16 @@ func (c *UserController) resetPwd(ctx *gin.Context) {
 
 /**
 @api {POST} /api/user/updateAvatar 更换头像
-@apiDescription 更新用户头像，json传输base64，仅支持支持小于64k jpeg、png。
+@apiDescription 更新用户头像，表单接收头像文件，仅支持支持小于64k jpeg、png。
 @apiName UserUpdateAvatar
 @apiGroup User
 
 @apiPermission 用户
 
+@apiHeader {String} Content-type multipart/form-data 多类型表单固定值。
 
-@apiParam {String} username 用户名。
-@apiParam {String} avatar 头像文件，仅支持支持小于64k jpeg、png,例如格式：data:image/jpeg;base64
-
-@apiParamExample {json} 请求示例
-{
-    "id": "13",
-    "avatar": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCABZAGYDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDLuJ5hcygTSZ3n+I+tR/aJwf8AXyf99mn3C/6TP/vt/OowvXPfvXZc8NseLicD/XSf99mjz5wf9dJ/32aZg59aUKc9TTFclFxPj/XSf99ml+0T9fOf/vs0wClxxS6hceLmc9ZZP++jUgnnBz50n/fRqHp25p+OP1pBcf58+f8AXSf99Gj7RP3mk4/2j0pnXqKcB7UBceJ5+vnSf99GnCefOfOk4/2jzTAMe9OxzkigLl7TZJTctmRyNh6sfUUUaV/x8vjpsP8AMUVLNYPQyLgYupv98/zpgB6H1qa4H+ly4/vn+dM/pTMmNFKBx0p4HNLgY64piEAox396XBp+O+DigYwJjovNOxz0pwH1pcc8DmgBuMdadjI560oGDS4OaBXDHp2NG3r7U4Dil20AW9MBFywzj5D/ADFFO0w4uW7/ACH+YoqWaw2MufH2mb2c/wA6jA68c1LOB9pl/wB8/wA6bjAHAzTM2NwQKdjP5Uo5znpTh9OnFMVxNopQPb/69OwKMfSgLjQv0p3QD0pev+GKMUCuHbpTsUU7Gc0AhPwpeBRzT8HHQk/SgZa0z/j6f/cP8xRT9MH+kN/uH+YoqWaw2MidT9plPX5z/OkxyKkuAPtMpx/y0P8AOmjNMxkxAMD2pwGPwpe1HHvzTQriGl69hSgDvShe9AXADvijBJ70oAz9KcAOnNAmJjvSr0p2OBRgZ+lAABxz1p2OfegLk08ChlJ6FvThi4b/AHD29xRT9PA+0N/uf1FFSzSD0Mecf6VLx0c/zpoqScD7RL/vn+dMA6+1UjF7hgemB0pcD34pcZ4oHPegA59qXBpfXpS49KdhNiY/OlAGOlKB3wacF6+1FguH8qdto5znAzTgD60rBcAMf56U4D8qADzSjnpQMt6aM3DcEjZ/UUUum4E7f7v9RRUs1hsZNxgXUnHG8/zqPHfGa6OT7z/U00dPxNVcTp+ZgdRxSj8K6AdBSnpT5iXT8znwAfwpQOOgroO5pw+6aOYfs/MwAvJyKUewrfH+FOHU0ri9n5mAAaUdelb4pKEw9n5mIPy7UpxnkVup/WlboKLh7MzdPH+kNx/D/UUVsQ/6w/SiobNIwsj/2Q=="
-}
+@apiParam {Integer} id 用户ID。
+@apiParam {File} file 上传头像文件。
 
 
 @apiSuccessExample 成功响应
@@ -501,7 +498,54 @@ HTTP/1.1 400 Bad Request
 
 // updateAvatar 更换头像
 func (c *UserController) updateAvatar(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.PostForm("id"))
+	if err != nil {
+		ErrIllegal(ctx, "参数非法，无法解析")
+		return
+	}
+	// 接取头像
+	file, err := ctx.FormFile("avatar")
+	if err != nil {
+		ErrIllegal(ctx, "参数非法，无法解析")
+		return
+	}
 
+	applog.L(ctx, "用户修改头像", map[string]interface{}{
+		"userId": id,
+	})
+
+	// 获取用户信息
+	claimsValue, _ := ctx.Get(middle.FlagClaims)
+	claims := claimsValue.(*jwt.Claims)
+
+	if claims.Type == "user" && claims.Sub != id {
+		ErrForbidden(ctx, "权限错误")
+		return
+	}
+	var user entity.User
+	err = repo.DB.First(&user, "id = ? AND is_delete = 0 ", id).Error
+	if err == gorm.ErrRecordNotFound {
+		ErrIllegal(ctx, "用户不存在或已被删除")
+		return
+	}
+	if err != nil {
+		ErrSys(ctx, err)
+		return
+	}
+
+	avatarName := fmt.Sprintf("user-%d", id)
+	user.Avatar = avatarName
+	avatarPath := filepath.Join(dir.AvatarDir, avatarName)
+
+	// 更新头像字段
+	if err = repo.DB.Save(&user).Error; err != nil {
+		ErrSys(ctx, err)
+		return
+	}
+	if err = ctx.SaveUploadedFile(file, avatarPath); err != nil {
+		ErrSys(ctx, err)
+		return
+	}
 }
 
 /**

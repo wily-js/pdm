@@ -19,7 +19,7 @@ func Anonymous(ctx *gin.Context) {
 		return
 	}
 	switch dest {
-	case "/api/login", "/api/system/version":
+	case "/api/login", "/api/system/version", "/api/check", "/api/avatar":
 		ctx.Set(FlagAnonymous, true)
 		return
 	}

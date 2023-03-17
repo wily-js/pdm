@@ -113,3 +113,55 @@ func pathExists(path string) (bool, error) {
 	}
 	return false, err
 }
+
+// CopyTempDir 复制至临时文件夹
+func CopyTempDir(srcPath string, destPath string) error {
+	//检测目录正确性
+	if srcInfo, err := os.Stat(srcPath); err != nil {
+		return err
+	} else {
+		if !srcInfo.IsDir() {
+			e := errors.New("srcPath不是一个正确的目录！")
+
+			return e
+		}
+	}
+
+	if destInfo, err := os.Stat(destPath); err != nil {
+		return err
+	} else {
+		if !destInfo.IsDir() {
+			err = errors.New("destInfo不是一个正确的目录！")
+			return err
+		}
+	}
+
+	err := filepath.Walk(srcPath, func(path string, f os.FileInfo, err error) error {
+		if f == nil {
+			return nil
+		}
+		if runtime.GOOS == "windows" {
+			path = strings.Replace(path, "\\", "/", -1)
+			srcPath = strings.Replace(srcPath, "\\", "/", -1)
+			destPath = strings.Replace(destPath, "\\", "/", -1)
+		}
+		if f.IsDir() {
+			destNewPath := strings.Replace(path, srcPath, destPath, -1)
+			if err := os.MkdirAll(destNewPath, os.ModePerm); err != nil {
+				return err
+			}
+		}
+		if !f.IsDir() {
+			destNewPath := strings.Replace(path, srcPath, destPath, -1)
+			_, err := copyFile(path, destNewPath)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
