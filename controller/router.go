@@ -38,4 +38,6 @@ func RouteMapping(r gin.IRouter) {
 	r = r.Group("/api")
 	NewLoginController(r)
 	NewUserController(r)
+	NewProjectController(r)
+	NewSystemInfoController(r)
 }
