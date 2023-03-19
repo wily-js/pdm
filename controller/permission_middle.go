@@ -21,10 +21,12 @@ const (
 )
 
 var (
-	Admin             = Authenticate([]string{UserTypeAdmin})                                               // 管理员
-	User              = Authenticate([]string{UserTypeUser})                                                // 普通用户
-	Audit             = Authenticate([]string{UserTypeAudit})                                               // 日志审计员
-	Authed            = Authenticate([]string{UserTypeAdmin, UserTypeUser, UserTypeAudit})                  // 所有已经认证的用户（不限角色），包括用户、管理员、审计员
+	Admin         = Authenticate([]string{UserTypeAdmin})                              // 管理员
+	User          = Authenticate([]string{UserTypeUser})                               // 普通用户
+	Audit         = Authenticate([]string{UserTypeAudit})                              // 日志审计员
+	Authed        = Authenticate([]string{UserTypeAdmin, UserTypeUser, UserTypeAudit}) // 所有已经认证的用户（不限角色），包括用户、管理员、审计员
+	ProjectMember = Authenticate([]string{UserTypeUser},
+		UserRoleProjectDeveloper, UserRoleProjectInterConnector, UserRoleProjectLeader, UserRoleProjectManager) // 项目成员
 	Manager           = Authenticate([]string{UserTypeUser}, UserRoleProjectManager)                        // 项目负责人
 	HighestPermission = Authenticate([]string{UserTypeUser}, UserRoleProjectLeader, UserRoleProjectManager) // 项目最高权限（负责人和管理员）
 )

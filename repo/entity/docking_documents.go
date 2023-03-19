@@ -10,10 +10,11 @@ type DockingDocuments struct {
 	ID        int       `gorm:"autoIncrement" json:"id"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
-	Version   string    `json:"version"` // 版本号
-	UserId    int       `json:"userId"`  // 发布者
-	Content   string    `json:"content"` // 版本更新描述
-	Assets    string    `json:"assets"`  // 附件列表
+	Name      string    `json:"name"`      // 对接文档名
+	UserId    int       `json:"userId"`    // 发布者
+	ProjectId int       `json:"projectId"` // 项目ID
+	Content   string    `json:"content"`   // 对接文档描述
+	Assets    string    `json:"assets"`    // 附件列表
 }
 
 func (c *DockingDocuments) MarshalJson() ([]byte, error) {

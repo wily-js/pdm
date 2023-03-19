@@ -21,7 +21,6 @@ func NewLoginController(r gin.IRouter) *LoginController {
 	r.POST("/login", res.login)
 	// 登出
 	r.DELETE("/logout", Authed, res.logout)
-
 	// 验证登录token
 	r.GET("/check", res.check)
 
@@ -69,6 +68,7 @@ func (c *LoginController) pwdAttempts(userName string) {
 
 @apiSuccess {String="user"} type 用户类型
 @apiSuccess {Integer} id 用户记录ID
+@apiSuccess {String} openid 工号
 @apiSuccess {String} name 姓名
 @apiSuccess {Integer} exp 会话过期时间，单位Unix时间戳毫秒（ms）
 
@@ -84,6 +84,7 @@ HTTP/1.1 200 OK
 {
 	"type": "user",
     "id": 1,
+	"openid":22001,
     "name": "张三",
     "exp": 1668523424095
 }
@@ -162,6 +163,7 @@ func (c *LoginController) login(ctx *gin.Context) {
 			userType = "user"
 			userSub = usr.ID
 			reqInfo.Name = usr.Name
+			reqInfo.Openid = usr.Openid
 		}
 		// 用户表未找到记录，抛出异常
 		if err == gorm.ErrRecordNotFound {
@@ -221,6 +223,7 @@ func (c *LoginController) logout(ctx *gin.Context) {
 
 @apiSuccess {String} type 用户类型
 @apiSuccess {Integer} id 用户记录ID
+@apiSuccess {String} openid 工号
 @apiSuccess {String} name 姓名
 @apiSuccess {Integer} exp 会话过期时间，单位Unix时间戳毫秒（ms）
 
@@ -230,10 +233,10 @@ GET /api/check
 {
 	"type": "user",
     "id": 1,
+	"openid":22001,
     "name": "张三",
     "exp": 1668523424095
 }
-
 
 @apiSuccessExample 成功响应
 HTTP/1.1 200 OK
@@ -265,5 +268,6 @@ func (c *LoginController) check(ctx *gin.Context) {
 	res := dto.LoginToDto{}
 	res.Transform(claims)
 	res.Name = user.Name
+	res.Openid = user.Openid
 	ctx.JSON(200, res)
 }

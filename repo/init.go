@@ -16,8 +16,9 @@ import (
 var DB *gorm.DB
 
 var (
-	UserRepo    *UserRepository
-	ProjectRepo *ProjectRepository
+	UserRepo          *UserRepository
+	ProjectRepo       *ProjectRepository
+	ProjectMemberRepo *ProjectMemberRepository
 )
 
 // Init 初始化数据库信息
@@ -58,5 +59,6 @@ func Init(config *appconf.Application) error {
 	// 服务注册
 	UserRepo = NewUserRepository()
 	ProjectRepo = NewProjectRepository()
+	ProjectMemberRepo = NewProjectMemberRepository()
 	return nil
 }

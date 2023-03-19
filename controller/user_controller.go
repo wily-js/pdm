@@ -52,14 +52,14 @@ func NewUserController(router gin.IRouter) *UserController {
 @api {POST} /api/user/create 用户创建
 @apiDescription 创建用户，用户名不能重复。
 创建用户时要求输入工号，若输入姓名，则生成姓名的拼音缩写。
+创建时若未输入密码则生成默认密码 Gm123qwe
 @apiName UserCreate
 @apiGroup User
 
 @apiPermission 管理员
 
 @apiParam {String} openid 工号。
-@apiParam {String{8..16}} password 口令，长度至少大于8。
-@apiParam {String} [name] 用户姓名。
+@apiParam {String} name 用户姓名。
 @apiParam {String} [username] 用户名（若用户未填写用户名，则默认工号）。
 @apiParam {String} [phone] 手机号。
 @apiParam {String} [email] 邮箱。
@@ -73,7 +73,6 @@ func NewUserController(router gin.IRouter) *UserController {
 @apiParamExample {json} 请求示例
 {
 	"openid":"1001",
-    "password": "Gm123qwe",
     "name": "张三",
 	"username":"1001",
     "phone":"13855555555",
@@ -98,6 +97,7 @@ HTTP/1.1 400 Bad Request
 
 // create 创建用户
 func (c *UserController) create(ctx *gin.Context) {
+	const defaultPassword = "Gm123qwe"
 	var info entity.User
 	err := ctx.BindJSON(&info)
 	applog.L(ctx, "创建用户", map[string]interface{}{
@@ -116,6 +116,12 @@ func (c *UserController) create(ctx *gin.Context) {
 	}
 	if exist {
 		ErrIllegal(ctx, "工号已经存在")
+		return
+	}
+
+	// 姓名不能为空
+	if len(strings.Trim(info.Name, " ")) == 0 {
+		ErrIllegal(ctx, "姓名不能为空")
 		return
 	}
 
@@ -186,12 +192,7 @@ func (c *UserController) create(ctx *gin.Context) {
 		return
 	}
 
-	// 口令长度 大于等8位
-	if len(strings.Trim(info.Password.String(), " ")) < 8 {
-		ErrIllegal(ctx, "口令长度不少于8位")
-		return
-	}
-	pwd, salt, err := reuint.GenPasswordSalt(info.Password.String())
+	pwd, salt, err := reuint.GenPasswordSalt(defaultPassword)
 	if err != nil {
 		ErrSys(ctx, err)
 		return
@@ -302,7 +303,7 @@ func (c *UserController) search(ctx *gin.Context) {
 @apiName UserModifyPwd
 @apiGroup User
 
-@apiPermission 管理员,用户
+@apiPermission 用户
 
 @apiParam {Integer} id 用户ID。
 @apiParam {String} oldPwd 原口令。

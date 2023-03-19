@@ -20,6 +20,7 @@ import (
 func NewProjectController(router gin.IRouter) *ProjectController {
 	res := &ProjectController{}
 	r := router.Group("/project")
+	NewProjectMemberController(r)
 	// 创建项目
 	r.POST("/create", Authed, res.create)
 	// 搜索项目
@@ -130,7 +131,7 @@ func (c *ProjectController) create(ctx *gin.Context) {
 			return err
 		}
 		// 项目成员：负责人
-		member.Role = 3
+		member.Role = UserRoleProjectLeader
 		member.ProjectId = info.ID
 		member.UserId = info.Manager
 		if err := tx.Create(&member).Error; err != nil {

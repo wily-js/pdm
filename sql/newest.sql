@@ -91,12 +91,14 @@ CREATE TABLE docking_documents
     id         INTEGER PRIMARY KEY AUTO_INCREMENT, -- 自增主键
     created_at DATETIME,                           -- 创建时间
     updated_at DATETIME,                           -- 更新时间
-    version    VARCHAR(256) NOT NULL,              -- 版本号
+    name    VARCHAR(256) NOT NULL,                 -- 对接文档名
     user_id    INTEGER,                            -- 发布者ID
-    content    TEXT,                               -- 版本更新描述
+    project_id INTEGER,                            -- 项目ID
+    content    TEXT,                               -- 对接文档描述
     assets     TEXT                                -- 附件列表,"JSON MAP:- key 文件名称- value 文件下载URL附件删除或添加时更新该字段。"
 
 );
+
 -- 创建技术方案表
 DROP TABLE IF EXISTS technical_proposal;
 CREATE TABLE technical_proposal
