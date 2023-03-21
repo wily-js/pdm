@@ -72,9 +72,9 @@ CREATE TABLE project_members
     user_id     INTEGER                            -- 用户ID
 );
 
--- 创建接口目录表
-DROP TABLE IF EXISTS interface_directory;
-CREATE TABLE interface_directory
+-- 创建接口管理表
+DROP TABLE IF EXISTS api_management;
+CREATE TABLE api_management
 (
     id         INTEGER PRIMARY KEY AUTO_INCREMENT,-- 自增主键
     created_at DATETIME,-- 创建时间
@@ -84,6 +84,38 @@ CREATE TABLE interface_directory
     filename   VARCHAR(512)                       -- 文件名称
 );
 
+-- 创建接口分类表
+DROP TABLE IF EXISTS api_categorize;
+CREATE TABLE api_categorize
+(
+    id         INTEGER PRIMARY KEY AUTO_INCREMENT,-- 自增主键
+    created_at DATETIME,-- 创建时间
+    updated_at DATETIME,-- 更新时间
+    parent_id  INTEGER, -- 父分类ID
+    name       VARCHAR(512) NOT NULL, -- 分类名称
+    project_id INTEGER,-- 所属项目ID
+    user_id    INTEGER-- 创建人ID
+);
+
+-- 创建接口用例表
+DROP TABLE IF EXISTS api_cases;
+CREATE TABLE api_cases
+(
+    id         INTEGER PRIMARY KEY AUTO_INCREMENT,-- 自增主键
+    created_at DATETIME,-- 创建时间
+    updated_at DATETIME,-- 更新时间
+    name       VARCHAR(512) NOT NULL, -- 接口名称
+    user_id  INTEGER, -- 创建人ID
+    categorize_id  INTEGER, -- 所属分类ID
+    description TEXT, -- 接口描述
+    method INTEGER ,-- 请求方法 0-GET，1-POST，2-PUT，3-DELETE
+    path VARCHAR(512),-- 请求路径
+    params TEXT,-- 请求参数
+    headers TEXT,-- 请求头
+    body_type INTEGER, -- 请求体类型  0-none，1-json，2-form，3-binary
+    body TEXT -- 请求体
+);
+
 -- 创建对接文档表
 DROP TABLE IF EXISTS docking_documents;
 CREATE TABLE docking_documents
@@ -91,7 +123,7 @@ CREATE TABLE docking_documents
     id         INTEGER PRIMARY KEY AUTO_INCREMENT, -- 自增主键
     created_at DATETIME,                           -- 创建时间
     updated_at DATETIME,                           -- 更新时间
-    name    VARCHAR(256) NOT NULL,                 -- 对接文档名
+    name    VARCHAR(256) NOT NULL,              	 -- 对接文档名
     user_id    INTEGER,                            -- 发布者ID
     project_id INTEGER,                            -- 项目ID
     content    TEXT,                               -- 对接文档描述
@@ -106,7 +138,7 @@ CREATE TABLE technical_proposal
     id         INTEGER PRIMARY KEY AUTO_INCREMENT, -- 自增主键
     created_at DATETIME,                           -- 创建时间
     updated_at DATETIME,                           -- 更新时间
-    name       VARCHAR(512) NOT NULL              -- 知识区名称
+    name       VARCHAR(512) NOT NULL              -- 技术方案名称
 );
 
 -- 创建日志表

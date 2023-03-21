@@ -43,4 +43,6 @@ func RouteMapping(r gin.IRouter) {
 	NewPublicController(r)
 	NewAuthorityController(r)
 	NewDockingDocumentsController(r)
+	NewCategorizeController(r)
+	NewCasesController(r)
 }
