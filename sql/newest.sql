@@ -72,21 +72,9 @@ CREATE TABLE project_members
     user_id     INTEGER                            -- 用户ID
 );
 
--- 创建接口管理表
-DROP TABLE IF EXISTS api_management;
-CREATE TABLE api_management
-(
-    id         INTEGER PRIMARY KEY AUTO_INCREMENT,-- 自增主键
-    created_at DATETIME,-- 创建时间
-    updated_at DATETIME,-- 更新时间
-    project_id INTEGER,-- 所属项目ID
-    title      VARCHAR(512) NOT NULL,-- 文档名
-    filename   VARCHAR(512)                       -- 文件名称
-);
-
 -- 创建接口分类表
-DROP TABLE IF EXISTS api_categorize;
-CREATE TABLE api_categorize
+DROP TABLE IF EXISTS api_categorizes;
+CREATE TABLE api_categorizes
 (
     id         INTEGER PRIMARY KEY AUTO_INCREMENT,-- 自增主键
     created_at DATETIME,-- 创建时间

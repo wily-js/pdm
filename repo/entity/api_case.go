@@ -5,7 +5,18 @@ import (
 	"time"
 )
 
-type Cases struct {
+const (
+	MethodGet      = 0
+	MethodPost     = 1
+	MethodPut      = 2
+	MethodDelete   = 3
+	BodyTypeNone   = 0
+	BodyTypeJson   = 1
+	BodyTypeForm   = 2
+	BodyTypeBinary = 3
+)
+
+type ApiCase struct {
 	ID           int       `gorm:"autoIncrement" json:"id"`
 	CreatedAt    time.Time `json:"createdAt"`
 	UpdatedAt    time.Time `json:"updatedAt"`
@@ -21,8 +32,8 @@ type Cases struct {
 	Body         string    `json:"body"`         // 请求体
 }
 
-func (c *Cases) MarshalJSON() ([]byte, error) {
-	type Alias Cases
+func (c *ApiCase) MarshalJSON() ([]byte, error) {
+	type Alias ApiCase
 	return json.Marshal(&struct {
 		*Alias
 		CreatedAt DateTime `json:"createdAt"`

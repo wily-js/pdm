@@ -19,6 +19,8 @@ var (
 	UserRepo          *UserRepository
 	ProjectRepo       *ProjectRepository
 	ProjectMemberRepo *ProjectMemberRepository
+	CategorizeRepo    *CategorizeRepository
+	CaseRepo          *CaseRepository
 )
 
 // Init 初始化数据库信息
@@ -60,5 +62,7 @@ func Init(config *appconf.Application) error {
 	UserRepo = NewUserRepository()
 	ProjectRepo = NewProjectRepository()
 	ProjectMemberRepo = NewProjectMemberRepository()
+	CategorizeRepo = NewCategorizeRepository()
+	CaseRepo = NewCaseRepository()
 	return nil
 }

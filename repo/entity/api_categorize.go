@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type Categorize struct {
+type ApiCategorize struct {
 	ID        int       `gorm:"autoIncrement" json:"id"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
@@ -15,8 +15,8 @@ type Categorize struct {
 	UserId    int       `json:"userId"`    // 创建人ID
 }
 
-func (c *Categorize) MarshalJSON() ([]byte, error) {
-	type Alias Categorize
+func (c *ApiCategorize) MarshalJSON() ([]byte, error) {
+	type Alias ApiCategorize
 	return json.Marshal(&struct {
 		*Alias
 		CreatedAt DateTime `json:"createdAt"`
