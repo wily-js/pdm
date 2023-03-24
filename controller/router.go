@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"mime"
 	"net/http"
+	"pdm/appconf"
 	"pdm/appconf/dir"
 	"pdm/controller/middle"
 )
@@ -16,7 +17,7 @@ var (
 
 // RouteMapping HTTP路由注册
 // r: 路由注册器
-func RouteMapping(r gin.IRouter) {
+func RouteMapping(r gin.IRouter, cfg *appconf.Application) {
 	// 中间件 - 拦截器 按顺序依次执行
 	tokenManager = middle.NewTokenFilter()
 	r.Use(
@@ -45,4 +46,7 @@ func RouteMapping(r gin.IRouter) {
 	NewDockingDocumentsController(r)
 	NewCategorizeController(r)
 	NewCasesController(r)
+	NewOperationLogController(r)
+	NewProgramLogController(r)
+	NewSsoController(r, cfg.SSOBaseUrl)
 }

@@ -20,7 +20,7 @@ var (
 // InitConsole 初始化控制台日志，同时向文件和控制写入日志
 // 文件日志每天自动切分，保存180天，文件日志保存于工作目录下的 ./logs/ 目录
 func InitConsole(debug bool) *zap.Logger {
-	filename := filepath.Join(dir.LogDir, "dmp.log")
+	filename := filepath.Join(dir.LogDir, "pdm.log")
 	// 创建文件目录
 	spliceFile := &lumberjack.Logger{
 		Filename:  filename,

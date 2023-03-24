@@ -8,6 +8,7 @@ const Version string = "V0.0.1"
 type Application struct {
 	Database       Database `yaml:"database"`       // 数据库连接配置，不同的数据库驱动连接配置不一样，见数据库驱动
 	Port           int      `yaml:"port"`           // 端口
+	SSOBaseUrl     string   `yaml:"SSOBaseUrl"`     // 单点登录基础路径
 	LogKeepMaxDays int      `yaml:"logKeepMaxDays"` // 操作日志最大保存天数，注意若该值小于等于0则表示不删除。
 	Debug          bool     `yaml:"debug"`          // 调试模式
 }
@@ -26,5 +27,6 @@ var defaultConfig = Application{
 	},
 	LogKeepMaxDays: 3 * 30, // 3月
 	Port:           8200,
+	SSOBaseUrl:     "http://nantemen.hzauth.com",
 	Debug:          true,
 }

@@ -257,7 +257,7 @@ func (c *LoginController) check(ctx *gin.Context) {
 	}
 	claims, err := reuint.VerifyToken(token)
 	if err != nil {
-		ErrSys(ctx, err)
+		ErrForbidden(ctx, "权限错误")
 		return
 	}
 	user := entity.User{}

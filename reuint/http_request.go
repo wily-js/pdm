@@ -93,7 +93,10 @@ func GenRequestBody(bodyType int, requestBody string) (*strings.Reader, url.Valu
 
 // ParsingResponseBody 生成响应体
 func ParsingResponseBody(method int, resp *http.Response) (string, error) {
-	body, _ := io.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
 	defer resp.Body.Close()
 	// 解析响应体数据
 	var respBody []byte

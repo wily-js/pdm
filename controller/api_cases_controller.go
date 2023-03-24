@@ -450,7 +450,11 @@ func (c *CasesController) send(ctx *gin.Context) {
 			return
 		}
 		// 发送请求
-		resp, _ = http.DefaultClient.Do(request)
+		resp, err = http.DefaultClient.Do(request)
+		if err != nil {
+			ErrIllegal(ctx, "发送请求失败")
+			return
+		}
 
 	case entity.MethodPost:
 		// 解析生成请求体数据
@@ -472,9 +476,17 @@ func (c *CasesController) send(ctx *gin.Context) {
 				ErrSys(ctx, err)
 				return
 			}
-			resp, _ = http.DefaultClient.Do(request)
+			resp, err = http.DefaultClient.Do(request)
+			if err != nil {
+				ErrIllegal(ctx, "发送请求失败")
+				return
+			}
 		} else if info.BodyType == entity.BodyTypeForm {
-			resp, _ = http.PostForm(info.Path, bodyForm)
+			resp, err = http.PostForm(info.Path, bodyForm)
+			if err != nil {
+				ErrIllegal(ctx, "发送请求失败")
+				return
+			}
 		} else if info.BodyType == entity.BodyTypeBinary {
 			// TODO 二进制文件
 		}
@@ -499,9 +511,17 @@ func (c *CasesController) send(ctx *gin.Context) {
 				ErrSys(ctx, err)
 				return
 			}
-			resp, _ = http.DefaultClient.Do(request)
+			resp, err = http.DefaultClient.Do(request)
+			if err != nil {
+				ErrIllegal(ctx, "发送请求失败")
+				return
+			}
 		} else if info.BodyType == entity.BodyTypeForm {
-			resp, _ = http.PostForm(info.Path, bodyForm)
+			resp, err = http.PostForm(info.Path, bodyForm)
+			if err != nil {
+				ErrIllegal(ctx, "发送请求失败")
+				return
+			}
 		} else if info.BodyType == entity.BodyTypeBinary {
 			// TODO 二进制文件
 		}
@@ -522,7 +542,11 @@ func (c *CasesController) send(ctx *gin.Context) {
 			return
 		}
 		// 发送请求
-		resp, _ = http.DefaultClient.Do(request)
+		resp, err = http.DefaultClient.Do(request)
+		if err != nil {
+			ErrIllegal(ctx, "发送请求失败")
+			return
+		}
 	default:
 		ErrIllegal(ctx, "参数非法，无法解析")
 	}
