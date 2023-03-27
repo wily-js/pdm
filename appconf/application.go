@@ -21,7 +21,7 @@ type Database struct {
 // 无法找到配置文件时候的缺省配置
 var defaultConfig = Application{
 	Database: Database{
-		DSN:  "root:123qwe@tcp(127.0.0.1:3306)/pdm1?charset=utf8mb4&parseTime=true",
+		DSN:  "root:123qwe@tcp(127.0.0.1:3306)/pdm?charset=utf8mb4&parseTime=true",
 		Type: "mysql",
 	},
 	LogKeepMaxDays: 3 * 30, // 3月
