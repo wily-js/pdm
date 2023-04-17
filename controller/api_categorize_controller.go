@@ -214,12 +214,10 @@ func (c *CategorizeController) list(ctx *gin.Context) {
 		return
 	}
 	reqInfo := make([]dto.CategorizeListDto, 0)
-	//categorizeIdList := make([]int, 0)
 	for _, val := range categorize {
 		temp := dto.CategorizeListDto{}
 		temp.Transform(&val, &entity.ApiCase{}, "categorize")
 		reqInfo = append(reqInfo, temp)
-		//categorizeIdList = append(categorizeIdList, val.ID)
 	}
 
 	// 获取用例列表

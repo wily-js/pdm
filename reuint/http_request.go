@@ -102,7 +102,7 @@ func ParsingResponseBody(method int, resp *http.Response) (string, error) {
 	var respBody []byte
 	if method == entity.MethodGet || method == entity.MethodDelete {
 		var v interface{}
-		err := json.Unmarshal(body, &v)
+		err = json.Unmarshal(body, &v)
 		if err != nil {
 			return "", err
 		}
@@ -144,7 +144,6 @@ func ParsingResponseHeader(resp *http.Response) (string, error) {
 // return [{"key":"id","value":"1","description":"ID"}]
 // getList 将含有一组或多组json格式数据的字符串转化为切片
 func getList(data string) []string {
-
 	if !strings.HasSuffix(data, "[") && !strings.HasSuffix(data, "]") {
 		if !strings.HasSuffix(data, "{") && !strings.HasSuffix(data, "}") {
 			return nil

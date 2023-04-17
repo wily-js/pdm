@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"io"
-	"log"
 	"math/rand"
 	"os"
 	"path"
@@ -198,8 +197,7 @@ func (c *DockingDocumentsController) edit(ctx *gin.Context) {
 		return
 	}
 	// 删除文件夹中未被引用的文件
-	err = reuint.DeleteUnreferencedFiles(info.Content, filepath.Join(dir.DockingDocDir, strconv.Itoa(info.ID), "doc"))
-	if err != nil {
+	if err = reuint.DeleteUnreferencedFiles(info.Content, filepath.Join(dir.DockingDocDir, strconv.Itoa(info.ID), "doc")); err != nil {
 		ErrSys(ctx, err)
 		return
 	}
@@ -239,7 +237,7 @@ func (c *DockingDocumentsController) upload(ctx *gin.Context) {
 	dockingDocId, _ := strconv.Atoi(ctx.PostForm("id"))
 	// 接收前端传递文件
 	file, err := ctx.FormFile("file")
-	log.Println(file.Filename)
+	//log.Println(file.Filename)
 	applog.L(ctx, "上传附件", map[string]interface{}{
 		"dockingDocId": dockingDocId,
 	})
@@ -802,10 +800,8 @@ func (c *DockingDocumentsController) assertGet(ctx *gin.Context) {
 
 	ctx.Header("Content-Type", reuint.GetMIME(fileType))
 
-	_, err = io.Copy(ctx.Writer, file)
-	if err != nil {
+	if _, err = io.Copy(ctx.Writer, file); err != nil {
 		ErrSys(ctx, err)
 		return
 	}
-
 }
