@@ -313,6 +313,7 @@ func (c *CasesController) edit(ctx *gin.Context) {
 	if info.CategorizeId <= 0 {
 		info.CategorizeId = caseInfo.CategorizeId
 	}
+	info.CreatedAt = caseInfo.CreatedAt
 	if err = repo.DB.Save(&info).Error; err != nil {
 		ErrSys(ctx, err)
 		return
