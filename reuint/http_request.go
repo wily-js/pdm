@@ -98,22 +98,27 @@ func ParsingResponseBody(method int, resp *http.Response) (string, error) {
 		return "", err
 	}
 	defer resp.Body.Close()
+
+	return string(body), nil
 	// 解析响应体数据
-	var respBody []byte
-	if method == entity.MethodGet || method == entity.MethodDelete {
-		var v interface{}
-		err = json.Unmarshal(body, &v)
-		if err != nil {
-			return "", err
-		}
-		respBody, err = json.Marshal(v)
-		if err != nil {
-			return "", err
-		}
-	} else {
-		respBody = body
-	}
-	return string(respBody), nil
+	//var respBody []byte
+	//if method == entity.MethodGet || method == entity.MethodDelete {
+	//	var v interface{}
+	//	err = json.Unmarshal(body, &v)
+	//	if err != nil {
+	//		log.Println("err = ", err)
+	//		return "", err
+	//	}
+	//	log.Println("v = ", v)
+	//	respBody, err = json.Marshal(v)
+	//	if err != nil {
+	//		return "", err
+	//	}
+	//	log.Println(respBody)
+	//} else {
+	//	respBody = body
+	//}
+	//return string(respBody), nil
 }
 
 // ParsingResponseHeader 生成响应头

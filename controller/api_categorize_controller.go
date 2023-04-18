@@ -18,15 +18,15 @@ func NewCategorizeController(router gin.IRouter) *CategorizeController {
 	res := &CategorizeController{}
 	r := router.Group("/categorize")
 	// 创建分类
-	r.POST("/create", res.create)
+	r.POST("/create", ExceptProjectInterConnector, res.create)
 	// 关键字查询分类或接口
-	r.GET("/search", res.search)
+	r.GET("/search", ProjectMember, res.search)
 	// 查询出分类下的子分类和接口列表
-	r.GET("/list", res.list)
+	r.GET("/list", ProjectMember, res.list)
 	// 编辑分类
-	r.POST("/edit", res.edit)
+	r.POST("/edit", ExceptProjectInterConnector, res.edit)
 	// 删除分类
-	r.DELETE("/delete", res.delete)
+	r.DELETE("/delete", ExceptProjectInterConnector, res.delete)
 
 	return res
 }
@@ -91,7 +91,7 @@ func (c *CategorizeController) create(ctx *gin.Context) {
 		return
 	}
 	// 分类名称唯一
-	exist, err := repo.CategorizeRepo.ExistName(info.Name, info.ParentId)
+	exist, err := repo.CategorizeRepo.ExistName(ctx, info.Name, info.ParentId)
 	if err != nil {
 		ErrSys(ctx, err)
 		return
@@ -207,9 +207,13 @@ HTTP/1.1 500
 // list 分类列表
 func (c *CategorizeController) list(ctx *gin.Context) {
 	id, _ := strconv.Atoi(ctx.Query("parentId"))
+
+	claimsValue, _ := ctx.Get(middle.FlagClaims)
+	claims := claimsValue.(*jwt.Claims)
+
 	// 获取分类列表
 	categorize := []entity.ApiCategorize{}
-	if err := repo.DB.Find(&categorize, "parent_id = ?", id).Error; err != nil {
+	if err := repo.DB.Find(&categorize, "parent_id = ? AND project_id = ?", id, claims.PID).Error; err != nil {
 		ErrSys(ctx, err)
 		return
 	}
@@ -307,7 +311,7 @@ func (c *CategorizeController) edit(ctx *gin.Context) {
 	}
 	// 同级分类名称唯一
 	if info.Name != reqInfo.Name {
-		exist, err := repo.CategorizeRepo.ExistName(info.Name, reqInfo.ParentId)
+		exist, err := repo.CategorizeRepo.ExistName(ctx, info.Name, reqInfo.ParentId)
 		if err != nil {
 			ErrSys(ctx, err)
 			return

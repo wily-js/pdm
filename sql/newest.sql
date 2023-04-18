@@ -29,7 +29,7 @@ CREATE TABLE users
     id          INTEGER PRIMARY KEY AUTO_INCREMENT, -- 自增主键
     created_at  DATETIME,                           -- 创建时间
     updated_at  DATETIME,                           -- 更新时间
-    openid     VARCHAR(512),                        -- 工号
+    openid      VARCHAR(512),                        -- 工号
     name        VARCHAR(256),                       -- 用户真实姓名
     name_pinyin VARCHAR(32),                        -- 姓名拼音缩写
     password    VARCHAR(512),                       -- 口令加盐Hash结果 16进制字符串
@@ -37,7 +37,7 @@ CREATE TABLE users
     username    VARCHAR(128),                       -- 用户登录时输入的账户名称
     phone       VARCHAR(256),                       -- 手机号
     email       VARCHAR(256),                       -- 邮箱
-    sn					VARCHAR(128),												-- 身份证号
+    sn			VARCHAR(128),												-- 身份证号
     qq_openid   VARCHAR(200),												-- QQ_openID
     wechat_openid VARCHAR(200),											-- 微信openID
     avatar      VARCHAR(512),												-- 头像文件名

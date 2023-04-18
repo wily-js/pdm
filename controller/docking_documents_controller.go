@@ -28,23 +28,23 @@ func NewDockingDocumentsController(router gin.IRouter) *DockingDocumentsControll
 	res := &DockingDocumentsController{}
 	r := router.Group("/docking")
 	// 创建对接文档
-	r.POST("/create", res.create)
+	r.POST("/create", ExceptProjectInterConnector, res.create)
 	// 编辑对接文档
-	r.POST("/edit", res.edit)
+	r.POST("/edit", ExceptProjectInterConnector, res.edit)
 	// 上传附件
-	r.POST("/upload", res.upload)
+	r.POST("/upload", ExceptProjectInterConnector, res.upload)
 	// 删除附件
-	r.DELETE("/remove", res.remove)
+	r.DELETE("/remove", ExceptProjectInterConnector, res.remove)
 	// 删除对接文档
-	r.DELETE("/delete", res.delete)
+	r.DELETE("/delete", ExceptProjectInterConnector, res.delete)
 	// 查询所有对接文档
-	r.GET("/all", res.all)
+	r.GET("/all", ProjectMember, res.all)
 	// 查询对接文档信息
-	r.GET("", res.info)
+	r.GET("", ProjectMember, res.info)
 	// 上传文件资源
-	r.POST("/assert", res.assertPost)
+	r.POST("/assert", ExceptProjectInterConnector, res.assertPost)
 	// 下载文档资源
-	r.GET("/assert", res.assertGet)
+	r.GET("/assert", ExceptProjectInterConnector, res.assertGet)
 	return res
 
 }

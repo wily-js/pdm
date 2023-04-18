@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	"log"
 	"net/http"
 	"pdm/controller/dto"
 	"pdm/controller/middle"
@@ -20,13 +21,13 @@ func NewCasesController(router gin.IRouter) *CasesController {
 	res := &CasesController{}
 	r := router.Group("/case")
 	// 接口用例创建
-	r.POST("/create", res.create)
+	r.POST("/create", ExceptProjectInterConnector, res.create)
 	// 查询接口用例具体信息
-	r.GET("/info", res.info)
+	r.GET("/info", ProjectMember, res.info)
 	// 编辑接口用例
-	r.POST("/edit", res.edit)
+	r.POST("/edit", ExceptProjectInterConnector, res.edit)
 	// 删除接口用例
-	r.DELETE("/delete", res.delete)
+	r.DELETE("/delete", ExceptProjectInterConnector, res.delete)
 	// 发送测试请求
 	r.POST("/send", res.send)
 	return res
@@ -465,6 +466,7 @@ func (c *CasesController) send(ctx *gin.Context) {
 			return
 		}
 		// POST请求
+		log.Println("json = ", bodyJson)
 		if info.BodyType == entity.BodyTypeJson {
 			if bodyJson == nil {
 				req, _ = http.NewRequest(http.MethodPost, info.Path, nil)

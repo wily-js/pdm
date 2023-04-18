@@ -20,11 +20,11 @@ func NewProjectMemberController(router gin.IRouter) *ProjectMemberController {
 	res := &ProjectMemberController{}
 	r := router.Group("/member")
 	// 添加成员
-	r.POST("/add", Manager, res.add)
+	r.POST("/add", HighestPermission, res.add)
 	// 修改角色
-	r.POST("/change", Manager, res.change)
+	r.POST("/change", HighestPermission, res.change)
 	// 删除成员
-	r.DELETE("/delete", Manager, res.delete)
+	r.DELETE("/delete", HighestPermission, res.delete)
 	// 查询所有成员
 	r.GET("/all", ProjectMember, res.all)
 	// 修改成员任务描述

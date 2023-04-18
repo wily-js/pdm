@@ -27,8 +27,8 @@ var (
 	Authed        = Authenticate([]string{UserTypeAdmin, UserTypeUser, UserTypeAudit}) // 所有已经认证的用户（不限角色），包括用户、管理员、审计员
 	ProjectMember = Authenticate([]string{UserTypeUser},
 		UserRoleProjectDeveloper, UserRoleProjectInterConnector, UserRoleProjectLeader, UserRoleProjectManager) // 项目成员
-	Manager           = Authenticate([]string{UserTypeUser}, UserRoleProjectManager)                        // 项目负责人
-	HighestPermission = Authenticate([]string{UserTypeUser}, UserRoleProjectLeader, UserRoleProjectManager) // 项目最高权限（负责人和管理员）
+	ExceptProjectInterConnector = Authenticate([]string{UserTypeUser}, UserRoleProjectLeader, UserRoleProjectManager, UserRoleProjectDeveloper) // 除对接外的成员权限
+	HighestPermission           = Authenticate([]string{UserTypeUser}, UserRoleProjectLeader, UserRoleProjectManager)                           // 项目最高权限（负责人和管理员）
 )
 
 // Authenticate 接口调用权限鉴别
