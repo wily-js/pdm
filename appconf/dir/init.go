@@ -15,6 +15,7 @@ var (
 	TechnicalProposalDir string // 技术方案存储目录
 	RootCertDir          string // 根证书管理
 	AvatarDir            string // 头像存储目录
+	BaseDocAreaDir       string // 基础文档区存储目录
 
 )
 
@@ -27,6 +28,7 @@ func Init() {
 	TechnicalProposalDir = filepath.Join(base, "technicalProposal")
 	RootCertDir = filepath.Join(base, "rootCerts")
 	AvatarDir = filepath.Join(base, "avatar")
+	BaseDocAreaDir = filepath.Join(base, "baseDocArea")
 	_ = os.MkdirAll(LogDir, os.ModePerm)
 	_ = os.MkdirAll(InterfaceDir, os.ModePerm)
 	_ = os.MkdirAll(UiDir, os.ModePerm)
@@ -34,6 +36,7 @@ func Init() {
 	_ = os.MkdirAll(TechnicalProposalDir, os.ModePerm)
 	_ = os.MkdirAll(RootCertDir, os.ModePerm)
 	_ = os.MkdirAll(AvatarDir, os.ModePerm)
+	_ = os.MkdirAll(BaseDocAreaDir, os.ModePerm)
 
 	log.Println("程序运行目录:", base)
 	log.Println("日志存储目录:", LogDir)
@@ -43,4 +46,6 @@ func Init() {
 	log.Println("技术方案存储目录:", TechnicalProposalDir)
 	log.Println("根证书目录:", RootCertDir)
 	log.Println("头像存储目录:", AvatarDir)
+	log.Println("基础文档储目录:", BaseDocAreaDir)
+
 }

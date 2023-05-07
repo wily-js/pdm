@@ -49,4 +49,5 @@ func RouteMapping(r gin.IRouter, cfg *appconf.Application) {
 	NewOperationLogController(r)
 	NewProgramLogController(r)
 	NewSsoController(r, cfg.SSOBaseUrl)
+	NewBaseDocumentAreaController(r)
 }
