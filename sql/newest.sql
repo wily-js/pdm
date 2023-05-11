@@ -119,6 +119,21 @@ CREATE TABLE docking_documents
 
 );
 
+-- 创建文档表
+DROP TABLE IF EXISTS documents;
+CREATE TABLE documents
+(
+    id         INTEGER PRIMARY KEY AUTO_INCREMENT,-- 自增主键
+    created_at DATETIME,-- 创建时间
+    updated_at DATETIME,-- 更新时间
+    project_id INTEGER,-- 所属项目ID
+    title      VARCHAR(512) NOT NULL,-- 文档名
+    doc_type   VARCHAR(128),-- 文档类型 可选值有：markdown、word、txt、excel
+    priority   INTEGER,-- 优先级 默认为0，越大优先级越高，用于文档排序，非特殊情况保持0即可。
+    filename   VARCHAR(512)                       -- 文件名称
+);
+
+
 -- 创建技术方案表
 DROP TABLE IF EXISTS technical_proposal;
 CREATE TABLE technical_proposal

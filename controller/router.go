@@ -15,11 +15,17 @@ var (
 	tokenManager *middle.TokenManager
 )
 
+// 编辑锁
+var (
+	editLock *middle.EditLock
+)
+
 // RouteMapping HTTP路由注册
 // r: 路由注册器
 func RouteMapping(r gin.IRouter, cfg *appconf.Application) {
 	// 中间件 - 拦截器 按顺序依次执行
 	tokenManager = middle.NewTokenFilter()
+	editLock = middle.NewEditLock()
 	r.Use(
 		middle.Recovery(),
 		middle.Anonymous,
@@ -50,4 +56,6 @@ func RouteMapping(r gin.IRouter, cfg *appconf.Application) {
 	NewProgramLogController(r)
 	NewSsoController(r, cfg.SSOBaseUrl)
 	NewBaseDocumentAreaController(r)
+	NewRootCertsController(r)
+	NewDocController(r)
 }

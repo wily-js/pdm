@@ -45,6 +45,8 @@ func NewDockingDocumentsController(router gin.IRouter) *DockingDocumentsControll
 	r.POST("/assert", ExceptProjectInterConnector, res.assertPost)
 	// 下载文档资源
 	r.GET("/assert", ExceptProjectInterConnector, res.assertGet)
+	// 导出文档
+	r.GET("/export", ExceptProjectInterConnector, res.export)
 	return res
 
 }
@@ -574,10 +576,10 @@ func (c *DockingDocumentsController) all(ctx *gin.Context) {
 }
 
 /**
-@api {GET} /api/docking 对接文档详情
+@api {GET} /api/docking/info 对接文档详情
 @apiDescription 查询指定对接文档详情。
 
-@apiName DockingGet
+@apiName DockingInfo
 @apiGroup Docking
 
 @apiPermission 项目负责人、开发
@@ -804,4 +806,32 @@ func (c *DockingDocumentsController) assertGet(ctx *gin.Context) {
 		ErrSys(ctx, err)
 		return
 	}
+}
+
+/**
+@api {GET} /api/docking/export 导出文档
+@apiDescription 导出文档。
+
+仅可导出markdown类型的文档
+
+@apiName DockingExport
+@apiGroup Docking
+
+@apiPermission
+
+@apiParam {String} docId 文档ID。
+
+@apiParamExample {http} 请求示例
+
+GET /api/doc/export?docId=46
+
+@apiErrorExample 失败响应
+HTTP/1.1 400 Bad Request
+
+权限错误
+*/
+
+// export 导出文档
+func (c *DockingDocumentsController) export(ctx *gin.Context) {
+
 }

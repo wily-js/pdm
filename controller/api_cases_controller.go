@@ -474,6 +474,7 @@ func (c *CasesController) send(ctx *gin.Context) {
 				req, _ = http.NewRequest(http.MethodPost, info.Path, bodyJson)
 			}
 			// 加入请求头
+			req.Header.Set("Content-Type", "application/json")
 			request, err := reuint.GenRequestHeader(req, info.Headers)
 			if err != nil {
 				ErrSys(ctx, err)

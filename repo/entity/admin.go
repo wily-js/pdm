@@ -5,6 +5,10 @@ import (
 	"time"
 )
 
+const (
+	B = "pdm" // 可区分标识符
+)
+
 // Admin 管理员
 type Admin struct {
 	ID        int       `gorm:"autoIncrement" json:"id"`
