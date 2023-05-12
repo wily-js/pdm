@@ -1,6 +1,9 @@
 package entity
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 // Document 文档
 type Document struct {
@@ -12,4 +15,17 @@ type Document struct {
 	DocType   string    `json:"docType"`   // 文档类型 可选值有：markdown、word、txt、excel
 	Priority  int       `json:"priority"`  // 优先级 默认为0，越大优先级越高，用于文档排序，非特殊情况保持0即可。
 	Filename  string    `json:"filename"`  // 文件名称
+}
+
+func (c *Document) MarshalJson() ([]byte, error) {
+	type Alias Document
+	return json.Marshal(&struct {
+		*Alias
+		CreatedAt DateTime `json:"createdAt"`
+		UpdatedAt DateTime `json:"updatedAt"`
+	}{
+		(*Alias)(c),
+		DateTime(c.CreatedAt),
+		DateTime(c.UpdatedAt),
+	})
 }

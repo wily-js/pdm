@@ -38,8 +38,6 @@ CREATE TABLE users
     phone       VARCHAR(256),                       -- 手机号
     email       VARCHAR(256),                       -- 邮箱
     sn			VARCHAR(128),												-- 身份证号
-    qq_openid   VARCHAR(200),												-- QQ_openID
-    wechat_openid VARCHAR(200),											-- 微信openID
     avatar      VARCHAR(512),												-- 头像文件名
     is_delete   TINYINT-- 是否删除 0 - 未删除（默认值） 1 - 删除
 );
@@ -135,12 +133,13 @@ CREATE TABLE documents
 
 
 -- 创建技术方案表
-DROP TABLE IF EXISTS technical_proposal;
-CREATE TABLE technical_proposal
+DROP TABLE IF EXISTS technical_proposals;
+CREATE TABLE technical_proposals
 (
     id         INTEGER PRIMARY KEY AUTO_INCREMENT, -- 自增主键
     created_at DATETIME,                           -- 创建时间
     updated_at DATETIME,                           -- 更新时间
+    project_id  INTEGER,                            -- 项目ID
     name       VARCHAR(512) NOT NULL              -- 技术方案名称
 );
 

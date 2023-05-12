@@ -49,7 +49,6 @@ func RouteMapping(r gin.IRouter, cfg *appconf.Application) {
 	NewSystemInfoController(r)
 	NewPublicController(r)
 	NewAuthorityController(r)
-	NewDockingDocumentsController(r)
 	NewCategorizeController(r)
 	NewCasesController(r)
 	NewOperationLogController(r)
@@ -58,4 +57,5 @@ func RouteMapping(r gin.IRouter, cfg *appconf.Application) {
 	NewBaseDocumentAreaController(r)
 	NewRootCertsController(r)
 	NewDocController(r)
+	NewTechnicalProposalController(r)
 }

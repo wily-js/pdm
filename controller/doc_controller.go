@@ -30,25 +30,27 @@ func NewDocController(router gin.IRouter) *DocController {
 	res := &DocController{}
 	r := router.Group("/doc")
 	// 创建项目文档
-	r.POST("/create", res.create)
+	r.POST("/create", ExceptProjectInterConnector, res.create)
 	// 获取文档信息
-	r.GET("/info", res.info)
+	r.GET("/info", Authed, res.info)
 	// 获取项目文档列表
-	r.GET("/projectDocList", res.projectDocList)
+	r.GET("/projectDocList", Authed, res.projectDocList)
 	// 更新文档内容
-	r.POST("/content", res.contentPost)
+	r.POST("/content", ExceptProjectInterConnector, res.contentPost)
 	// 获取文档内容
-	r.GET("/content", res.contentGet)
+	r.GET("/content", Authed, res.contentGet)
 	// 上传文档资源
-	r.POST("/assert", res.assertPost)
+	r.POST("/assert", ExceptProjectInterConnector, res.assertPost)
 	// 下载文档资源
-	r.GET("/assert", res.assertGet)
+	r.GET("/assert", ExceptProjectInterConnector, res.assertGet)
 	// 获取文档编辑锁
-	r.POST("/lock", res.lock)
+	r.POST("/lock", ExceptProjectInterConnector, res.lock)
 	// 取消编辑
-	r.POST("/cancel", res.cancel)
+	r.POST("/cancel", ExceptProjectInterConnector, res.cancel)
 	// 导出文档
-	r.GET("/export", res.export)
+	r.GET("/export", ExceptProjectInterConnector, res.export)
+	// 生成技术方案
+	r.GET("/generate", ExceptProjectInterConnector, res.generate)
 	return res
 }
 
@@ -1075,6 +1077,114 @@ func (c *DocController) export(ctx *gin.Context) {
 
 	err = reuint.Zip(ctx.Writer, temp)
 	if err != nil {
+		ErrSys(ctx, err)
+		return
+	}
+}
+
+/**
+@api {GET} /api/doc/generate 导出文档
+@apiDescription 生成技术方案。
+
+
+@apiName DocGenerate
+@apiGroup Doc
+
+@apiPermission 项目负责人
+
+@apiParam {String} docId 文档ID。
+
+@apiParamExample {http} 请求示例
+
+GET /api/doc/generate?docId=46
+
+@apiErrorExample 失败响应
+HTTP/1.1 400 Bad Request
+
+权限错误
+*/
+
+// generate 生成技术方案
+func (c *DocController) generate(ctx *gin.Context) {
+	var doc entity.Document
+	var technicalProposal entity.TechnicalProposal
+	docId := ctx.Query("docId")
+
+	applog.L(ctx, "生成技术方案", map[string]interface{}{
+		"docId": docId,
+	})
+	if err := repo.DB.First(&doc, "id = ?", docId).Error; err != nil {
+		ErrSys(ctx, err)
+		return
+	}
+	claimsValue, _ := ctx.Get(middle.FlagClaims)
+	claims := claimsValue.(*jwt.Claims)
+	projectName, err := repo.ProjectRepo.GetProjectName(ctx)
+	if err != nil {
+		ErrSys(ctx, err)
+		return
+	}
+	tpDir := filepath.Join(dir.TechnicalProposalDir, projectName)
+	err = repo.DB.First(&technicalProposal, "project_id = ?", claims.PID).Error
+	if err == gorm.ErrRecordNotFound {
+		_ = os.MkdirAll(tpDir, os.ModePerm)
+	}
+	if err != nil && err != gorm.ErrRecordNotFound {
+		ErrSys(ctx, err)
+		return
+	}
+	docFilePath := filepath.Join(dir.DocDir, docId)
+
+	// 生成目标文件夹 文件夹名称格式 文件名_更新时间
+	filename := fmt.Sprintf("%s_%s", doc.Title, doc.UpdatedAt.Format("20060102"))
+	destPath := filepath.Join(tpDir, filename)
+
+	_ = os.MkdirAll(destPath, os.ModePerm)
+	if err = reuint.CopyDir(docFilePath, destPath); err != nil {
+		ErrSys(ctx, err)
+		return
+	}
+	temp := filepath.Join(destPath, doc.Filename)
+
+	dest, err := os.OpenFile(temp, os.O_RDWR, os.ModePerm)
+	if err != nil {
+		ErrSys(ctx, err)
+		return
+	}
+	// 读取文件
+
+	// 防止用户通过 ../../ 的方式下载到操作系统内的重要文件
+	if !strings.HasPrefix(dest.Name(), tpDir) {
+		ErrIllegal(ctx, "文件路径错误")
+		return
+	}
+
+	content, err := io.ReadAll(dest)
+	if err != nil {
+		ErrSys(ctx, err)
+		return
+	}
+	reg := regexp.MustCompile("\\/api\\/doc\\/assert\\?docId=[0-9]+(\\\\)?&file=")
+	results := reg.ReplaceAllString(string(content), "./")
+	// 将修改后的内容写入文件
+	// 带缓冲区的*Writer
+	writer := bufio.NewWriter(dest)
+	if _, err = writer.WriteString(results); err != nil {
+		ErrSys(ctx, err)
+		return
+	}
+
+	// 将缓冲区中的内容写入到文件里
+	if err = writer.Flush(); err != nil {
+		ErrSys(ctx, err)
+		return
+	}
+	dest.Close()
+	res := entity.TechnicalProposal{
+		Name:      doc.Filename,
+		ProjectId: claims.PID,
+	}
+	if err = repo.DB.Create(&res).Error; err != nil {
 		ErrSys(ctx, err)
 		return
 	}

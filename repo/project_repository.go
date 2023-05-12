@@ -1,8 +1,11 @@
 package repo
 
 import (
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	"pdm/controller/middle"
 	"pdm/repo/entity"
+	"pdm/reuint/jwt"
 )
 
 // ProjectRepository 项目支持层
@@ -39,6 +42,20 @@ func (r *ProjectRepository) NameExist(name string) (bool, error) {
 		return true, err
 	}
 	return true, nil
+}
+
+func (r *ProjectRepository) GetProjectName(ctx *gin.Context) (string, error) {
+	res := entity.Project{}
+	claimsValue, _ := ctx.Get(middle.FlagClaims)
+	claims := claimsValue.(*jwt.Claims)
+	err := DB.First(&res, "id = ? AND is_delete = 0", claims.PID).Error
+	if err == gorm.ErrRecordNotFound {
+		return "", err
+	}
+	if err != nil {
+		return "", err
+	}
+	return res.Name, nil
 }
 
 func NewProjectRepository() *ProjectRepository {

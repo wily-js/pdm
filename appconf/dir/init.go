@@ -11,12 +11,11 @@ var (
 	LogDir               string // 日志存储目录
 	InterfaceDir         string // 接口目录文件存储目录
 	UiDir                string // 前端文件存储目录
-	DockingDocDir        string //对接文档文件存储目录
 	TechnicalProposalDir string // 技术方案存储目录
 	RootCertDir          string // 根证书管理
 	AvatarDir            string // 头像存储目录
 	BaseDocAreaDir       string // 基础文档区存储目录
-	DocDir               string // 文档文件存储目录
+	DocDir               string // 对接文档文件存储目录
 )
 
 func Init() {
@@ -24,7 +23,6 @@ func Init() {
 	LogDir = filepath.Join(base, "logs")
 	InterfaceDir = filepath.Join(base, "interface")
 	UiDir = filepath.Join(base, "ui")
-	DockingDocDir = filepath.Join(base, "dockingDoc")
 	TechnicalProposalDir = filepath.Join(base, "technicalProposal")
 	RootCertDir = filepath.Join(base, "rootCerts")
 	AvatarDir = filepath.Join(base, "avatar")
@@ -34,7 +32,6 @@ func Init() {
 	_ = os.MkdirAll(LogDir, os.ModePerm)
 	_ = os.MkdirAll(InterfaceDir, os.ModePerm)
 	_ = os.MkdirAll(UiDir, os.ModePerm)
-	_ = os.MkdirAll(DockingDocDir, os.ModePerm)
 	_ = os.MkdirAll(TechnicalProposalDir, os.ModePerm)
 	_ = os.MkdirAll(RootCertDir, os.ModePerm)
 	_ = os.MkdirAll(AvatarDir, os.ModePerm)
@@ -45,11 +42,10 @@ func Init() {
 	log.Println("日志存储目录:", LogDir)
 	log.Println("接口目录文件存储目录:", InterfaceDir)
 	log.Println("前端文件存储目录:", UiDir)
-	log.Println("对接文档文件存储目录:", DockingDocDir)
 	log.Println("技术方案存储目录:", TechnicalProposalDir)
 	log.Println("根证书目录:", RootCertDir)
 	log.Println("头像存储目录:", AvatarDir)
 	log.Println("基础文档储目录:", BaseDocAreaDir)
-	log.Println("文档文件存储目录:", DocDir)
+	log.Println("对接文档文件存储目录:", DocDir)
 
 }
